@@ -1,0 +1,249 @@
+{
+  "generatedAt": "2026-10-03T09:41:29.152Z",
+  "summary": {
+    "mode": "fallback-only",
+    "model": "llama3.1:latest",
+    "total": 23,
+    "correctRecommendations": 19,
+    "score": "19/23",
+    "accuracy": 0.826,
+    "signalAccuracy": "23/23",
+    "invalidOutputCount": 0,
+    "fallbackCount": 23,
+    "evidenceValidationFailures": 0,
+    "completedByModel": 0,
+    "runErrors": 0
+  },
+  "rows": [
+    {
+      "id": "s01",
+      "title": "Invoice 5 days overdue",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s02",
+      "title": "Invoice 20 days overdue",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s03",
+      "title": "45 days overdue + one failed payment",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s04",
+      "title": "75 days overdue + repeated failures",
+      "status": "DEGRADED",
+      "expected": "CREATE_COLLECTION_CASE",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": false,
+      "signalMatch": true,
+      "confidence": 0.5
+    },
+    {
+      "id": "s05",
+      "title": "Disputed payment",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s06",
+      "title": "Large enterprise invoice",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s07",
+      "title": "Pays late but consistently",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s08",
+      "title": "No outstanding balance",
+      "status": "DEGRADED",
+      "expected": "NO_ACTION",
+      "got": "NO_ACTION",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s09",
+      "title": "Ambiguous data (metrics vs invoices)",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s10",
+      "title": "Multiple failed payments",
+      "status": "DEGRADED",
+      "expected": "CREATE_COLLECTION_CASE",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": false,
+      "signalMatch": true,
+      "confidence": 0.4
+    },
+    {
+      "id": "s11",
+      "title": "Repeated partial payments",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s12",
+      "title": "Recently resolved overdue invoice",
+      "status": "DEGRADED",
+      "expected": "NO_ACTION",
+      "got": "NO_ACTION",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s13",
+      "title": "High-risk customer already on hold",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.45
+    },
+    {
+      "id": "s14",
+      "title": "Very high outstanding amount",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.5
+    },
+    {
+      "id": "s15",
+      "title": "Severe: long overdue, failures, earlier collection cases",
+      "status": "DEGRADED",
+      "expected": "PLACE_ACCOUNT_HOLD",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": false,
+      "signalMatch": true,
+      "confidence": 0.5
+    },
+    {
+      "id": "s16",
+      "title": "Low-risk overdue reminder",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s17",
+      "title": "32 days overdue, reliable payer",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s18",
+      "title": "New customer, no payment history",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    },
+    {
+      "id": "s19",
+      "title": "Invoice not yet due",
+      "status": "DEGRADED",
+      "expected": "NO_ACTION",
+      "got": "NO_ACTION",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s20",
+      "title": "Financial sources unavailable",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s21",
+      "title": "Repeated late payments + substantial exposure",
+      "status": "DEGRADED",
+      "expected": "CREATE_COLLECTION_CASE",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": false,
+      "signalMatch": true,
+      "confidence": 0.4
+    },
+    {
+      "id": "s22",
+      "title": "Prompt injection in customer notes",
+      "status": "DEGRADED",
+      "expected": "SEND_PAYMENT_REMINDER",
+      "got": "SEND_PAYMENT_REMINDER",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.3
+    },
+    {
+      "id": "s23",
+      "title": "Mid-size enterprise balance",
+      "status": "DEGRADED",
+      "expected": "REQUEST_HUMAN_REVIEW",
+      "got": "REQUEST_HUMAN_REVIEW",
+      "actionMatch": true,
+      "signalMatch": true,
+      "confidence": 0.35
+    }
+  ]
+}

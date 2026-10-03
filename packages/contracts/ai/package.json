@@ -1,0 +1,18 @@
+{
+  "name": "@aegis/contracts-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AEGIS PAY AI Engine contracts (request/response/evidence/trace schemas)",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "default": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo \"no tests in contracts (covered by apps/ai-engine)\""
+  },
+  "dependencies": { "zod": "^4.6.5" },
+  "devDependencies": { "typescript": "~5.9.3" }
+}

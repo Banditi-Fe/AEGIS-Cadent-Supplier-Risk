@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.env
+**/.env
+coverage
+*.log
+apps/ai-engine/evaluation/results

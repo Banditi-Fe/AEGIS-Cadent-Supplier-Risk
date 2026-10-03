@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aegis-pay-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aegis_pay
+      POSTGRES_USER: aegis
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - aegis-pay-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis -d aegis_pay"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  aegis-pay-postgres:

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "paths": { "@aegis/contracts-ai": ["../../packages/contracts/ai/src/index.ts"] }
+  },
+  "include": ["src", "test", "evaluation", "scripts", "vitest.config.ts"]
+}

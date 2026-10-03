@@ -1,0 +1,58 @@
+openapi: 3.1.0
+info:
+  title: AEGIS PAY Core API
+  version: 0.1.0
+  description: >-
+    Core API contract for payment operations. AI recommendations are evidence
+    only; authorization, policy, risk, decisions, and execution belong to Core API.
+servers:
+  - url: http://localhost:3000
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Liveness check
+      responses:
+        '200':
+          description: Service process is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /api/v1/health:
+    get:
+      operationId: getApiHealth
+      summary: Versioned health check for integrations
+      responses:
+        '200':
+          description: Service process is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+components:
+  schemas:
+    Health:
+      type: object
+      required: [service, status, timestamp]
+      properties:
+        service: { type: string, const: core-api }
+        status: { type: string, const: healthy }
+        timestamp: { type: string, format: date-time }
+    Decision:
+      type: string
+      enum: [AUTO, APPROVAL, BLOCKED]
+    ActionType:
+      type: string
+      enum: [SEND_PAYMENT_REMINDER, CREATE_COLLECTION_CASE, PLACE_ACCOUNT_HOLD, REQUEST_HUMAN_REVIEW]
+    AiRecommendation:
+      type: object
+      required: [caseId, recommendedAction, confidence, summary]
+      properties:
+        caseId: { type: string }
+        recommendedAction: { $ref: '#/components/schemas/ActionType' }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        summary: { type: string }
+        signals: { type: array, items: { type: string } }
+        uncertainties: { type: array, items: { type: string } }
+      description: Evidence only; never an authorization or execution instruction.

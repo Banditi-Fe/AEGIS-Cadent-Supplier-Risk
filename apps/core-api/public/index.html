@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f6f3" />
+    <meta name="description" content="AEGIS supplier risk demonstration dashboard. Synthetic data only." />
+    <title>AEGIS · Supplier intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#overview" aria-label="AEGIS home">
+          <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27 8v8c0 6.1-4.4 10.7-11 13-6.6-2.3-11-6.9-11-13V8l11-5Z"/><path d="m10.5 16 3.5 3.5 7.5-8"/></svg></span>
+          <span class="brand-copy"><strong>AEGIS</strong><small>SUPPLIER INTELLIGENCE</small></span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span><span>Overview</span><span class="nav-count">01</span></button>
+          <button class="nav-item" data-view="disruptions"><span class="nav-icon">◉</span><span>Disruptions</span><span class="nav-pill">1</span></button>
+          <button class="nav-item" data-view="materials"><span class="nav-icon">▤</span><span>Materials</span></button>
+          <button class="nav-item" data-view="network"><span class="nav-icon">⌘</span><span>Supplier network</span></button>
+          <button class="nav-item" data-view="risk"><span class="nav-icon">◌</span><span>Risk coverage</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="ariba-mini"><span class="ariba-dot"></span><span><b>Ariba adapter</b><small>Not connected</small></span><span class="external-icon">↗</span></div>
+          <button class="sidebar-help" data-action="about"><span>ⓘ</span> About workspace</button>
+          <div class="profile-row"><span class="profile-avatar">AD</span><span><b>Analyst demo</b><small>Local workspace</small></span><button class="more-btn" aria-label="Open settings" data-action="settings">···</button></div>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="breadcrumbs"><span>Workspace</span><i>/</i><strong id="crumb">Overview</strong></div>
+          <div class="topbar-actions"><span class="demo-badge"><span class="pulse-dot"></span> LOCAL WORKSPACE</span><button class="icon-button" data-action="settings" aria-label="Access settings">⚙</button><span class="top-avatar">AD</span></div>
+        </header>
+        <div class="page-content" id="page"></div>
+        <footer class="footer-note"><span>AEGIS Supplier Intelligence</span><span>Local prototype · sample supplier scenario · materials register is editable</span><span>v0.3</span></footer>
+      </main>
+    </div>
+
+    <div class="overlay" id="overlay" aria-hidden="true"><div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"></div></div>
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+}
+enum SupplierStatus {
+  ACTIVE
+  AT_RISK
+  SUSPENDED
+  UNKNOWN
+}
+enum Criticality {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+enum RiskCategory {
+  FINANCIAL
+  OPERATIONAL
+  BUSINESS_CONTINUITY
+  CYBER
+  ESG
+  COMPLIANCE
+  GEOPOLITICAL
+  REPUTATIONAL
+}
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  UNKNOWN
+}
+enum DisruptionStatus {
+  OPEN
+  ASSESSED
+  RESOLVED
+}
+enum RecoveryOptionType {
+  TRANSFER_STOCK
+  EXPEDITE_SUPPLY
+  APPROVED_ALTERNATE
+  RESCHEDULE_WORK
+  MONITOR
+}
+enum Decision {
+  AUTO
+  APPROVAL
+  BLOCKED
+}
+enum RecoveryActionStatus {
+  PENDING_APPROVAL
+  PREPARED
+  BLOCKED
+  APPROVED
+  REJECTED
+  EXECUTED
+  FAILED
+}
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+enum UserRole {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+enum SyncStatus {
+  PENDING
+  SUCCEEDED
+  DEGRADED
+  FAILED
+}
+
+model Organization {
+  id String @id @default(cuid())
+  name String
+  slug String @unique
+  status OrganizationStatus @default(ACTIVE)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  users User[]
+  suppliers Supplier[]
+  facilities Facility[]
+  materials Material[]
+  disruptions Disruption[]
+  supplyDependencies SupplyDependency[]
+  riskSignals SupplierRiskSignal[]
+  assessments ImpactAssessment[]
+  recoveryActions RecoveryAction[]
+  approvals Approval[]
+  auditEvents AuditEvent[]
+  aribaMappings AribaSupplierMapping[]
+  aribaSyncLogs AribaSyncLog[]
+}
+
+model User {
+  id String @id @default(cuid())
+  organizationId String
+  email String
+  passwordHash String
+  role UserRole @default(OPERATOR)
+  active Boolean @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deciderLinks ApprovalDeciderLink[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, email])
+}
+
+model Supplier {
+  id String @id @default(cuid())
+  organizationId String
+  externalId String?
+  name String
+  tier Int
+  status SupplierStatus @default(UNKNOWN)
+  criticality Criticality @default(MEDIUM)
+  countryCode String? @db.Char(2)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parentLinks SupplierRelationship[] @relation("SupplierChild")
+  childLinks SupplierRelationship[] @relation("SupplierParent")
+  riskSignals SupplierRiskSignal[]
+  disruptions Disruption[]
+  supplyDependencies SupplyDependency[]
+  aribaMapping AribaSupplierMapping?
+  @@unique([organizationId, id])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, tier, status])
+}
+
+model SupplierRelationship {
+  organizationId String
+  parentSupplierId String
+  childSupplierId String
+  dependencyLabel String?
+  materialId String?
+  verifiedAt DateTime? @db.Timestamptz(6)
+  parentSupplier Supplier @relation("SupplierParent", fields: [organizationId, parentSupplierId], references: [organizationId, id], onDelete: Cascade)
+  childSupplier Supplier @relation("SupplierChild", fields: [organizationId, childSupplierId], references: [organizationId, id], onDelete: Cascade)
+  material Material? @relation(fields: [organizationId, materialId], references: [organizationId, id], onDelete: Cascade)
+  @@id([organizationId, parentSupplierId, childSupplierId])
+  @@index([organizationId, childSupplierId])
+}
+
+model Facility {
+  id String @id @default(cuid())
+  organizationId String
+  externalId String?
+  name String
+  serviceArea String
+  countryCode String? @db.Char(2)
+  criticality Criticality @default(MEDIUM)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  inventory InventoryPosition[]
+  dependencies SupplyDependency[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, serviceArea])
+}
+
+model Material {
+  id String @id @default(cuid())
+  organizationId String
+  externalId String?
+  name String
+  unitOfMeasure String
+  currency String @default("GBP") @db.Char(3)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  inventory InventoryPosition[]
+  dependencies SupplyDependency[]
+  supplierRelationships SupplierRelationship[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, externalId])
+}
+
+model InventoryPosition {
+  organizationId String
+  facilityId String
+  materialId String
+  onHandUnits Int
+  reservedUnits Int
+  safetyStockUnits Int
+  dailyDemandUnits Int
+  observedAt DateTime @db.Timestamptz(6)
+  sourceSystem String
+  facility Facility @relation(fields: [organizationId, facilityId], references: [organizationId, id], onDelete: Cascade)
+  material Material @relation(fields: [organizationId, materialId], references: [organizationId, id], onDelete: Cascade)
+  @@id([organizationId, facilityId, materialId])
+  @@index([organizationId, materialId])
+}
+
+model SupplyDependency {
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplierId String
+  facilityId String
+  materialId String
+  unitsPerDay Int
+  criticality Criticality @default(MEDIUM)
+  validFrom DateTime? @db.Timestamptz(6)
+  validTo DateTime? @db.Timestamptz(6)
+  supplier Supplier @relation(fields: [organizationId, supplierId], references: [organizationId, id], onDelete: Cascade)
+  facility Facility @relation(fields: [organizationId, facilityId], references: [organizationId, id], onDelete: Cascade)
+  material Material @relation(fields: [organizationId, materialId], references: [organizationId, id], onDelete: Cascade)
+  @@id([organizationId, supplierId, facilityId, materialId])
+  @@index([organizationId, materialId, facilityId])
+}
+
+model SupplierRiskSignal {
+  id String @id @default(cuid())
+  organizationId String
+  supplierId String
+  category RiskCategory
+  level RiskLevel @default(UNKNOWN)
+  title String
+  summary String
+  source String
+  sourceRecordId String?
+  observedAt DateTime @db.Timestamptz(6)
+  validUntil DateTime? @db.Timestamptz(6)
+  evidenceJson Json
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [organizationId, supplierId], references: [organizationId, id], onDelete: Cascade)
+  @@unique([organizationId, id])
+  @@index([organizationId, supplierId, category, observedAt])
+  @@index([organizationId, level, observedAt])
+}
+
+model Disruption {
+  id String @id @default(cuid())
+  organizationId String
+  supplierId String
+  materialId String
+  delayDays Int
+  reportedAt DateTime @default(now()) @db.Timestamptz(6)
+  sourceMessage String
+  sourceSystem String
+  status DisruptionStatus @default(OPEN)
+  externalReference String?
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [organizationId, supplierId], references: [organizationId, id], onDelete: Restrict)
+  assessments ImpactAssessment[]
+  recoveryActions RecoveryAction[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, sourceSystem, externalReference])
+  @@index([organizationId, status, reportedAt])
+  @@index([organizationId, supplierId, status])
+}
+
+model ImpactAssessment {
+  id String @id @default(cuid())
+  organizationId String
+  disruptionId String
+  riskLevel RiskLevel
+  affectedSupplierIds Json
+  affectedFacilitiesJson Json
+  optionsJson Json
+  evidenceJson Json
+  dataWarnings Json
+  modelProvider String?
+  modelName String?
+  modelConfidence Decimal? @db.Decimal(5, 4)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  disruption Disruption @relation(fields: [organizationId, disruptionId], references: [organizationId, id], onDelete: Cascade)
+  recoveryActions RecoveryAction[]
+  @@unique([organizationId, id])
+  @@index([organizationId, disruptionId, createdAt])
+}
+
+model RecoveryAction {
+  id String @id @default(cuid())
+  organizationId String
+  disruptionId String
+  assessmentId String?
+  optionId String
+  optionType RecoveryOptionType
+  decision Decision
+  status RecoveryActionStatus @default(PENDING_APPROVAL)
+  estimatedCost Decimal @db.Decimal(20, 2)
+  currency String @db.Char(3)
+  optionJson Json
+  decisionReason String
+  idempotencyKey String
+  createdByRole UserRole
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  executedAt DateTime? @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  disruption Disruption @relation(fields: [organizationId, disruptionId], references: [organizationId, id], onDelete: Cascade)
+  assessment ImpactAssessment? @relation(fields: [organizationId, assessmentId], references: [organizationId, id], onDelete: Restrict)
+  approvals Approval[]
+  @@unique([organizationId, id])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, disruptionId])
+}
+
+model Approval {
+  id String @id @default(cuid())
+  organizationId String
+  recoveryActionId String
+  status ApprovalStatus @default(PENDING)
+  requiredRole UserRole @default(MANAGER)
+  decidedAt DateTime? @db.Timestamptz(6)
+  reason String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recoveryAction RecoveryAction @relation(fields: [organizationId, recoveryActionId], references: [organizationId, id], onDelete: Cascade)
+  deciderLink ApprovalDeciderLink?
+  @@unique([organizationId, id])
+  @@index([organizationId, status, createdAt])
+}
+
+model ApprovalDeciderLink {
+  organizationId String
+  approvalId String
+  userId String
+  approval Approval @relation(fields: [organizationId, approvalId], references: [organizationId, id], onDelete: Cascade)
+  user User @relation(fields: [organizationId, userId], references: [organizationId, id], onDelete: Restrict)
+  @@id([organizationId, approvalId])
+  @@index([organizationId, userId])
+}
+
+model AuditEvent {
+  id String @id @default(cuid())
+  organizationId String
+  actorType String
+  actorId String?
+  eventType String
+  entityType String
+  entityId String
+  correlationId String
+  metadataJson Json
+  previousHash String?
+  eventHash String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@unique([organizationId, id])
+  @@index([organizationId, createdAt])
+  @@index([organizationId, entityType, entityId])
+}
+
+model AribaSupplierMapping {
+  id String @id @default(cuid())
+  organizationId String
+  supplierId String
+  aribaSupplierId String
+  sourceSystem String @default("SAP_ARIBA_RISK")
+  lastSyncedAt DateTime? @db.Timestamptz(6)
+  syncStatus SyncStatus @default(PENDING)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  supplier Supplier @relation(fields: [organizationId, supplierId], references: [organizationId, id], onDelete: Cascade)
+  @@unique([organizationId, id])
+  @@unique([organizationId, supplierId])
+  @@unique([organizationId, aribaSupplierId])
+}
+
+model AribaSyncLog {
+  id String @id @default(cuid())
+  organizationId String
+  direction String
+  status SyncStatus
+  recordsRead Int @default(0)
+  recordsWritten Int @default(0)
+  errorCode String?
+  startedAt DateTime @default(now()) @db.Timestamptz(6)
+  completedAt DateTime? @db.Timestamptz(6)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId, startedAt])
+}

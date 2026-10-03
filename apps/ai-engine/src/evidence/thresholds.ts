@@ -1,0 +1,22 @@
+/** Deterministic thresholds. Documented in docs/agent-workflow.md. Amounts are in major currency units. */
+export const T = {
+  overdue30: 30,
+  overdue60: 60,
+  highOutstanding: 5000,
+  veryHighOutstanding: 25000,
+  tinyAmount: 100,
+  repeatedFailures: 2,
+  failureWindowDays: 30,
+  lateRatio: 0.5,
+  lateMinSamples: 3,
+  noRecentPaymentDays: 60,
+  partialWindowDays: 90,
+  partialCount: 2,
+  disputeWindowDays: 180,
+  conflictRelTolerance: 0.01,
+  conflictAbsTolerance: 1,
+  maxInvoicesEvidence: 8,
+  maxPaymentsEvidence: 10,
+  maxCasesEvidence: 5,
+  maxRecords: 200,
+} as const;

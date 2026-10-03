@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "agentRunId": "run_synthetic_example",
+  "organizationId": "cadent-demo",
+  "disruptionId": "DSP-DEMO-001",
+  "status": "DEGRADED",
+  "summary": "Northern Alloy Works (synthetic) reports a 10-day delay affecting DN300 pressure regulator valve. The synthetic Manchester depot has 4 days of cover and a projected 3,000-unit gap.",
+  "riskLevel": "HIGH",
+  "impacts": [{
+    "facilityId": "DEPOT-MAN",
+    "facilityName": "Manchester Network Depot (synthetic)",
+    "serviceArea": "North West",
+    "itemId": "MAT-DN300-REG",
+    "itemName": "DN300 pressure regulator valve",
+    "availableUnits": 2000,
+    "dailyDemand": 500,
+    "daysOfCover": 4,
+    "shortageAt": "2026-10-07T00:00:00.000Z",
+    "delayDays": 10,
+    "uncoveredDays": 6,
+    "shortageUnits": 3000,
+    "serviceCriticality": "CRITICAL",
+    "evidenceIds": ["ev_inventory", "ev_demand", "ev_delay"]
+  }],
+  "recommendation": {
+    "optionId": "OPT-TRANSFER-DEPOT-BIR",
+    "rationale": "Illustrative transfer option covers the projected gap at lower estimated cost than expedite; manager approval and fresh inventory confirmation are required.",
+    "confidence": 0.55,
+    "citedEvidenceIds": ["ev_inventory", "ev_demand", "ev_transfer", "ev_delay"]
+  },
+  "uncertainties": ["Synthetic scenario only; verify stock, demand, transfer lead time and costs in source systems."],
+  "evidence": [],
+  "options": [],
+  "toolTrace": [],
+  "model": { "provider": "deterministic", "name": "safe-fallback", "latencyMs": 0, "status": "UNAVAILABLE" }
+}

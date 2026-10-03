@@ -1,0 +1,12 @@
+# Combined ignore rules from both supplied archives
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+apps/core-api/data/
+*.log
+.DS_Store
+.idea/
+.vscode/
